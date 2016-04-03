@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es5",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "sourceMap": false,
+    "moduleResolution": "node",
+    "declaration": true,
+    "outDir": "./dist"
+  },
+  "files": [
+    "src/index.ts",
+    "node_modules/angular2/typings/browser.d.ts",
+    "typings/browser.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "typings"
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "name": "ng2-rest-api",
+  "version": "0.1.0",
+  "scripts": {
+    "prepublish": "tsc",
+    "tsc": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zaqqaz/ng2-typing-carousel"
+  },
+  "author": {
+    "name": "Denis Artyuhovich",
+    "email": "i@denis.by"
+  },
+  "keywords": [
+    "angular",
+    "angular2",
+    "carousel",
+    "directive",
+    "typing"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zaqqaz/ng2-typing-carousel/issues"
+  },
+  "main": "ng2-typing-carousel.js",
+  "typings": "./ng2-typing-carousel.d.ts",
+  "dependencies": {
+    "es6-shim": "^0.35.0"
+  },
+  "devDependencies": {
+    "angular2": "^2.0.0-beta.12",
+    "es6-promise": "^3.0.2",
+    "es6-shim": "^0.35.0",
+    "reflect-metadata": "0.1.2",
+    "rxjs": "5.0.0-beta.2",
+    "zone.js": "0.6.6",
+    "typescript": "^1.7.5"
+  },
+  "engines": {
+    "node": ">=0.8.0"
+  }
+}
