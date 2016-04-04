@@ -27,7 +27,7 @@ export default class Helper {
      *                     / "*" / "+" / "," / ";" / "="
      */
     static encodeUriQuery(val: any, pctEncodeSpaces: any): string;
-    static entries(obj: any): {};
+    static entries(obj: any): IterableIterator<any[]>;
     static isValidDottedPath(path: any): boolean;
     static lookupDottedPath(obj: any, path: any): any;
     static extractParams(data: any, actionParams: any): {};
