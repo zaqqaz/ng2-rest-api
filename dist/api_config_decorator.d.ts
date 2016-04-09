@@ -1,2 +1,2 @@
-declare var _default: (...args: any[]) => (cls: any) => any;
-export default _default;
+declare let ApiConfig: (ApiConfig) => ClassDecorator;
+export { ApiConfig };

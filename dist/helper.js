@@ -1,16 +1,16 @@
-export default class Helper {
-
+"use strict";
+class Helper {
     /**
      * Copy instance with their methods
      */
     static copyInstances(target, ...sources) {
-            sources.forEach(source => {
-                Object.defineProperties(target, Object.keys(source).reduce((descriptors, key) => {
-                    descriptors[key] = Object.getOwnPropertyDescriptor(source, key);
-                    return descriptors;
-                }, {}));
-            });
-            return target;
+        sources.forEach(source => {
+            Object.defineProperties(target, Object.keys(source).reduce((descriptors, key) => {
+                descriptors[key] = Object.getOwnPropertyDescriptor(source, key);
+                return descriptors;
+            }, {}));
+        });
+        return target;
     }
     /**
      * We need our custom method because encodeURIComponent is too aggressive and doesn't follow
@@ -25,11 +25,10 @@ export default class Helper {
      */
     static encodeUriSegment(val) {
         return Helper.encodeUriQuery(val, true).
-        replace(/%26/gi, '&').
-        replace(/%3D/gi, '=').
-        replace(/%2B/gi, '+');
+            replace(/%26/gi, '&').
+            replace(/%3D/gi, '=').
+            replace(/%2B/gi, '+');
     }
-
     /**
      * This method is intended for encoding *key* or *value* parts of query component. We need a
      * custom method because encodeURIComponent is too aggressive and encodes stuff that doesn't
@@ -43,46 +42,39 @@ export default class Helper {
      */
     static encodeUriQuery(val, pctEncodeSpaces) {
         return encodeURIComponent(val).
-        replace(/%40/gi, '@').
-        replace(/%3A/gi, ':').
-        replace(/%24/g, '$').
-        replace(/%2C/gi, ',').
-        replace(/%20/g, (pctEncodeSpaces ? '%20' : '+'));
+            replace(/%40/gi, '@').
+            replace(/%3A/gi, ':').
+            replace(/%24/g, '$').
+            replace(/%2C/gi, ',').
+            replace(/%20/g, (pctEncodeSpaces ? '%20' : '+'));
     }
-
-    static * entries(obj) {
-        if(obj) {
+    static *entries(obj) {
+        if (obj) {
             for (let key of Object.keys(obj)) {
                 yield [key, obj[key]];
             }
         }
     }
-
     // Helper functions and regex to lookup a dotted path on an object
     // stopping at undefined/null.  The path must be composed of ASCII
     // identifiers (just like $parse)
     static isValidDottedPath(path) {
         let MEMBER_NAME_REGEX = /^(\.[a-zA-Z_$@][0-9a-zA-Z_$@]*)+$/;
         return (path != null && path !== '' && path !== 'hasOwnProperty' &&
-        MEMBER_NAME_REGEX.test('.' + path));
+            MEMBER_NAME_REGEX.test('.' + path));
     }
-
-
     static lookupDottedPath(obj, path) {
         if (!Helper.isValidDottedPath(path)) {
             //noinspection TypeScriptValidateTypes
             throw Error('badmember', 'Dotted member path "@{0}" is invalid.', path);
         }
-
         var keys = path.split('.');
         for (var i = 0, ii = keys.length; i < ii && typeof obj !== 'undefined'; i++) {
             var key = keys[i];
             obj = (obj !== null) ? obj[key] : undefined;
         }
-
         return obj;
     }
-
     static extractParams(data, actionParams) {
         var ids = {};
         for (let [key, value] of Helper.entries(actionParams)) {
@@ -92,18 +84,10 @@ export default class Helper {
             ids[key] = value && value.charAt && value.charAt(0) == '@' ?
                 Helper.lookupDottedPath(data, value.substr(1)) : value;
         }
-
         return ids;
     }
-
     static setUrlParams(data, params, actionUrl) {
-        let protocolAndDomain = '',
-            urlParams = {},
-            url = actionUrl,
-            PROTOCOL_AND_DOMAIN_REGEX = /^https?:\/\/[^\/]*/,
-            val,
-            encodedVal;
-
+        let protocolAndDomain = '', urlParams = {}, url = actionUrl, PROTOCOL_AND_DOMAIN_REGEX = /^https?:\/\/[^\/]*/, val, encodedVal;
         url.split(/\W/).forEach(function (param) {
             if (param === 'hasOwnProperty') {
                 //noinspection TypeScriptValidateTypes
@@ -115,7 +99,6 @@ export default class Helper {
                 urlParams[param] = {
                     isQueryParamValue: isQueryParamValue
                 };
-
                 if (!params[param] && !isQueryParamValue) {
                     params[param] = '@' + param;
                 }
@@ -126,9 +109,7 @@ export default class Helper {
             protocolAndDomain = match;
             return '';
         });
-
         params = Helper.extractParams(data, params) || {};
-
         for (let [urlParam, paramInfo] of Helper.entries(urlParams)) {
             val = params.hasOwnProperty(urlParam) ? params[urlParam] : '';
             if (typeof val !== 'undefined' && val !== null) {
@@ -136,40 +117,39 @@ export default class Helper {
                 console.log(urlParam);
                 if (paramInfo.isQueryParamValue) {
                     encodedVal = Helper.encodeUriQuery(val, true);
-                } else {
+                }
+                else {
                     encodedVal = Helper.encodeUriSegment(val);
                 }
                 url = url.replace(new RegExp(":" + urlParam + "(\\W|$)", "g"), function (match, p1) {
                     return encodedVal + p1;
                 });
-            } else {
-                url = url.replace(new RegExp("(\/?):" + urlParam + "(\\W|$)", "g"), function (match,
-                                                                                              leadingSlashes, tail) {
+            }
+            else {
+                url = url.replace(new RegExp("(\/?):" + urlParam + "(\\W|$)", "g"), function (match, leadingSlashes, tail) {
                     if (tail.charAt(0) == '/') {
                         return tail;
-                    } else {
+                    }
+                    else {
                         return leadingSlashes + tail;
                     }
                 });
             }
         }
-
         url = url.replace(/\/+$/, '') || '/';
-
         // then replace collapse `/.` if found in the last URL path segment before the query
         // E.g. `http://url.com/id./format?q=x` becomes `http://url.com/id.format?q=x`
         url = url.replace(/\/\.(?=\w+($|\?))/, '.');
         // replace escaped `/\.` with `/.`
         let compiledUrl = protocolAndDomain + url.replace(/\/\\\./, '/.');
-
-
         // set other get params
         for (let [key, value] of Helper.entries(params)) {
             if (!urlParams[key]) {
                 compiledUrl += (compiledUrl.indexOf("?") < 0 ? "?" : "&") + key + "=" + value;
             }
         }
-
         return compiledUrl;
     }
 }
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = Helper;

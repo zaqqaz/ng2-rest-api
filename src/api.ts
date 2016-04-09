@@ -1,35 +1,29 @@
-import 'es6-shim';
 import {Http, RequestOptions, Request, RequestMethod} from 'angular2/http';
-import Helper from './helper';
 import {Injectable} from 'angular2/core';
-import {Observable} from 'rxjs/Observable';
-import {RouteRegistry} from 'angular2/router';
+import * as Rx from 'rxjs/rx';
 import {reflector}  from 'angular2/src/core/reflection/reflection';
-import {ApiResponseTypeError} from "./exceptions";
 import {isFunction} from 'angular2/src/facade/lang';
 import {ApplicationRef} from 'angular2/src/core/application_ref';
-import ApiConfig from './api_config';
+import Helper from './helper';
+import {ApiResponseTypeError} from "./exceptions";
+import {ApiConfig} from './api_config';
 
 @Injectable()
-class ApiProvider {
-    static get parameters() {
-        return [[Http], [ApplicationRef]];
-    }
+export class ApiProvider {
+    constructor(private http: Http, private applicationRef: ApplicationRef) {
+        let config:ApiConfig = new ApiConfig({});
 
-    constructor(http, ApplicationRef) {
-        let config = {};
-
-        ApplicationRef.componentTypes.forEach((component) => {
+        this.applicationRef.componentTypes.forEach((component) => {
             let annotations = reflector.annotations(component);
             annotations.forEach((annotation) => {
                 if (annotation instanceof ApiConfig) {
-                    Object.assign(config, annotation);
+                     Object.assign(config, annotation);
                 }
             })
         });
 
         /**
-         * Инициализация конечных endpoint и их методов
+         * Init endpoints and their actions
          * TODO: cache
          */
         for (let [endpoint, endpointParams] of Helper.entries(config.endpoints)) {
@@ -59,15 +53,16 @@ class ApiProvider {
                         body: JSON.stringify(copiedRequestData)
                     });
 
-                    let httpPromise = http.request(compiledUrl, requestOptions)
+                    let httpPromise = this.http.request(compiledUrl, requestOptions);
+                    httpPromise
                         .toPromise()
                         .then(function (response) {
                             let mappedResponse;
 
                             if (instantiateModel === false) {
-                                mappedResponse = response.data;
+                                mappedResponse = response.text();
                             } else {
-                                let responseBody = JSON.parse(response._body),
+                                let responseBody = response.json(),
                                     responseIsArray = Array.isArray(responseBody);
 
                                 if (isArray && !responseIsArray) {
@@ -86,7 +81,7 @@ class ApiProvider {
                                 mappedResponse;
                         });
 
-                    return Observable.fromPromise(httpPromise)
+                    return Rx.Observable.fromPromise(httpPromise)
                 }
             }
         }
@@ -142,5 +137,3 @@ class ApiProvider {
         return Object.assign(defaultActions, actions);
     }
 }
-
-export default ApiProvider;

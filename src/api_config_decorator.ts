@@ -1,5 +1,6 @@
-//noinspection TypeScriptCheckImport
 import {makeDecorator} from 'angular2/src/core/util/decorators';
-import ApiConfig from './api_config';
+import {ApiConfig as ApiConfigClass}  from './api_config';
 
-export default (() => makeDecorator(ApiConfig))();
+let ApiConfig: (ApiConfig) => ClassDecorator = makeDecorator(ApiConfigClass);
+export {ApiConfig};
+
