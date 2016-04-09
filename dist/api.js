@@ -49,10 +49,9 @@ let ApiProvider = ApiProvider_1 = class ApiProvider {
                         url: compiledUrl,
                         body: JSON.stringify(copiedRequestData)
                     });
-                    let httpPromise = this.http.request(compiledUrl, requestOptions);
-                    httpPromise
-                        .toPromise()
-                        .then(function (response) {
+                    let httpPromise = this.http.request(compiledUrl, requestOptions).toPromise();
+                    return Rx.Observable.fromPromise(httpPromise
+                        .then((response) => {
                         let mappedResponse;
                         if (instantiateModel === false) {
                             mappedResponse = response.text();
@@ -72,8 +71,7 @@ let ApiProvider = ApiProvider_1 = class ApiProvider {
                         return Array.isArray(headersForReading) ?
                             [mappedResponse, ApiProvider_1.readHeaders(headersForReading, response.headers)] :
                             mappedResponse;
-                    });
-                    return Rx.Observable.fromPromise(httpPromise);
+                    }));
                 };
             }
         }

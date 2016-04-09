@@ -17,7 +17,7 @@ export class ApiProvider {
             let annotations = reflector.annotations(component);
             annotations.forEach((annotation) => {
                 if (annotation instanceof ApiConfig) {
-                     Object.assign(config, annotation);
+                    Object.assign(config, annotation);
                 }
             })
         });
@@ -53,10 +53,9 @@ export class ApiProvider {
                         body: JSON.stringify(copiedRequestData)
                     });
 
-                    let httpPromise = this.http.request(compiledUrl, requestOptions);
-                    httpPromise
-                        .toPromise()
-                        .then(function (response) {
+                    let httpPromise = this.http.request(compiledUrl, requestOptions).toPromise();
+                    return Rx.Observable.fromPromise(httpPromise
+                        .then((response) => {
                             let mappedResponse;
 
                             if (instantiateModel === false) {
@@ -79,9 +78,7 @@ export class ApiProvider {
                             return Array.isArray(headersForReading) ?
                                 [mappedResponse, ApiProvider.readHeaders(headersForReading, response.headers)] :
                                 mappedResponse;
-                        });
-
-                    return Rx.Observable.fromPromise(httpPromise)
+                        }));
                 }
             }
         }
