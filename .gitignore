@@ -1,19 +1,34 @@
-# Node
-node_modules
-npm-debug.log
-typings
+# See http://help.github.com/ignore-files/ for more about ignoring files.
 
-# JetBrains
-.idea
+# compiled output
+/dist
+/tmp
+
+# dependencies
+/node_modules
+/bower_components
+
+# IDEs and editors
+/.idea
+/.vscode
 .project
-.settings
-.idea/*
-*.iml
+.classpath
+*.launch
+.settings/
 
-# Windows
-Thumbs.db
-Desktop.ini
+# misc
+/.sass-cache
+/connect.lock
+/coverage/*
+/libpeerconnection.log
+npm-debug.log
+testem.log
+/typings
 
-# Mac
+# e2e
+/e2e/*.js
+/e2e/*.map
+
+#System Files
 .DS_Store
-**/.DS_Store
+Thumbs.db

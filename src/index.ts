@@ -1,4 +1,3 @@
-import {ApiProvider as Api} from './api';
-import {ApiConfig} from './api_config_decorator';
-
-export {ApiConfig, Api};
+import './polyfills.ts';
+export {ApiProvider} from "./module/api.service";
+export {Ng2RestApiModule} from './module/ng2-rest-api.module';
