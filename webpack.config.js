@@ -1,5 +1,6 @@
 const webpack = require('webpack');
 const path = require('path');
+const nodeExternals = require('webpack-node-externals');
 
 const config = {
   entry: {
@@ -12,13 +13,15 @@ const config = {
     libraryTarget: 'commonjs'
   },
   resolve: {
+    modules: ['./src', 'node_modules'],
     extensions: ['.ts', '.es6', '.js', '.json']
   },
   module: {
     rules: [
-      {test: /\.ts$/, exclude: /node_modules/, loader: 'ts-loader'}
+      {test: /\.ts$/, exclude: /node_modules/, loader: 'babel-loader?presets[]=es2015!ts-loader'}
     ]
   },
+  externals: [nodeExternals()],
   plugins: [
     new webpack.ContextReplacementPlugin(
       /angular(\\|\/)core(\\|\/)(esm(\\|\/)src|src)(\\|\/)linker/,
