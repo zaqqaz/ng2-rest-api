@@ -43,14 +43,6 @@ export class Helper {
     return encodeURIComponent(val).replace(/%40/gi, '@').replace(/%3A/gi, ':').replace(/%24/g, '$').replace(/%2C/gi, ',').replace(/%20/g, (pctEncodeSpaces ? '%20' : '+'));
   }
 
-  static * entries(obj) {
-    if (obj) {
-      for (let key of Object.keys(obj)) {
-        yield [key, obj[key]];
-      }
-    }
-  }
-
   // Helper functions and regex to lookup a dotted path on an object
   // stopping at undefined/null.  The path must be composed of ASCII
   // identifiers (just like $parse)
@@ -77,7 +69,8 @@ export class Helper {
 
   static extractParams(data, actionParams) {
     var ids = {};
-    for (let [key, value] of Helper.entries(actionParams)) {
+    for (let key of Object.keys(actionParams)) {
+      let value = actionParams[key];
       if (value && typeof value === 'function') {
         value = value();
       }
@@ -120,7 +113,8 @@ export class Helper {
 
     params = Helper.extractParams(data, params) || {};
 
-    for (let [urlParam, paramInfo] of Helper.entries(urlParams)) {
+    for (let urlParam of Object.keys(urlParams)) {
+      let paramInfo = urlParams[urlParam];
       val = params.hasOwnProperty(urlParam) ? params[urlParam] : '';
       if (typeof val !== 'undefined' && val !== null) {
 
@@ -129,9 +123,9 @@ export class Helper {
         } else {
           encodedVal = Helper.encodeUriSegment(val);
         }
-        url = url.replace(new RegExp(":" + urlParam + "(\\W|$)", "g"),  (match, p1) => encodedVal + p1);
+        url = url.replace(new RegExp(":" + urlParam + "(\\W|$)", "g"), (match, p1) => encodedVal + p1);
       } else {
-        url = url.replace(new RegExp("(\/?):" + urlParam + "(\\W|$)", "g"), (match,leadingSlashes, tail) => {
+        url = url.replace(new RegExp("(\/?):" + urlParam + "(\\W|$)", "g"), (match, leadingSlashes, tail) => {
           if (tail.charAt(0) == '/') {
             return tail;
           } else {
@@ -151,8 +145,9 @@ export class Helper {
 
 
     // set other get params
-    for (let [key, value] of Helper.entries(params)) {
-      if (!urlParams[key]) {
+    for (let key of Object.keys(params)) {
+      let value = params[key];
+      if (!urlParams[key] && value) {
         compiledUrl += (compiledUrl.indexOf("?") < 0 ? "?" : "&") + key + "=" + value;
       }
     }

@@ -13,10 +13,16 @@ export class ApiEndpoint {
 
     this.endpoint.actions.some(action => {
       if (action.name.toLowerCase() === actionName.toLowerCase()) {
-        const compiledUrl = Helper.setUrlParams(data, Object.assign({}, action.params, params), this.endpoint.route);
         const isSaveRequest = (action.method === 'PUT' || action.method === 'POST');
 
-        // copy entity to prevent side-effects and execute beforeSave method
+        // if is not save request - we don't have body data, only get params.
+        if(!isSaveRequest) {
+          params = data;
+        }
+
+        const compiledUrl = Helper.setUrlParams(data, Object.assign({}, action.params, params), this.endpoint.route);
+
+        // copy entity to prevent side-effects and execute beforeSave method for save requests
         const copiedRequestData = Helper.copyInstances(data);
         if (isSaveRequest && copiedRequestData && isFunction(copiedRequestData.beforeSave)) {
           copiedRequestData.beforeSave();
@@ -32,7 +38,7 @@ export class ApiEndpoint {
           .map((response: Response) => {
             let mappedResponse;
 
-            if (action.instantiateModel === false) {
+            if (action.instantiateModel === false || !response.text()) {
               mappedResponse = response.text();
             } else {
               let responseBody = response.json(),
@@ -68,7 +74,7 @@ export class ApiEndpoint {
       return false;
     });
 
-    if(!request) {
+    if (!request) {
       const error = new Error(`API: '${actionName}' is not a registered action`);
       console.error(error);
 
