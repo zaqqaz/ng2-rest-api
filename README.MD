@@ -246,6 +246,11 @@ export class PostComponent implements OnInit {
   }
 }
 ```
+## To Do
+- Improve documentation.
+- Cache
+- Add tests
+- Method to set headers for all actions, and for specific. (Authorization token etc.)
 
 ## Cache
 Will be implemented soon.
