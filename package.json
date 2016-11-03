@@ -1,6 +1,6 @@
 {
   "name": "ng2-rest-api",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "license": "MIT",
   "main": "./src/index.ts",
   "typings": "./dist/index.d.ts",
