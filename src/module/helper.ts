@@ -1,8 +1,8 @@
 export class Helper {
 
-  // /**
-  //  * Copy instance with their methods
-  //  */
+  /**
+   * Copy instance with their methods
+   */
   static copyInstances(target, ...sources) {
     sources.forEach(source => {
       Object.defineProperties(target, Object.keys(source).reduce((descriptors, key) => {
