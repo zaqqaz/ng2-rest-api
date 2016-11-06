@@ -60,13 +60,12 @@ interface Endpoint {
   name: OpaqueToken; // The name of emdpoint.
   route: string; // A parameterized part of URL
   model?: any; // {Object} - model on which will be mapped response, if no - return JSON object.
-  actions?: Action[]; // Hash with declaration of custom actions that will be available in addition to the default set of default actions (see below).
+  actions?: Action[]; // Hash with declaration of custom actions that will be available in addition to the default set of default actions.
 }
 ```
 
 **route** -
 A parameterized part of URL template with parameters prefixed by : as in /user/:username. If you are using a URL with a port number (e.g. http://example.com:8080/api), it will be respected.
-
 If you are using a url with a suffix, just add the suffix, like this:
 '/resource.json' or '/:id.json' or even '/resource/:resource_id.:format'
 If the parameter before the suffix is empty, :resource_id in this case, then the /. will be collapsed down to a single ..
