@@ -49,7 +49,7 @@ But if you need you can override them and add any others.
 **ApiConfig**
 ```typescript
 interface ApiConfig {
-  baseUrl: string,
+  baseUrl: string,  // e.g. http://example.com:8080/api
   endpoints: Endpoint[]
 }
 ```
@@ -65,11 +65,11 @@ interface Endpoint {
 ```
 
 **route** -
-A parameterized part of URL template with parameters prefixed by : as in /user/:username. If you are using a URL with a port number (e.g. http://example.com:8080/api), it will be respected.
+A parameterized part of URL template with parameters prefixed by : as in `/user/:username`.
 If you are using a url with a suffix, just add the suffix, like this:
-'/resource.json' or '/:id.json' or even '/resource/:resource_id.:format'
-If the parameter before the suffix is empty, :resource_id in this case, then the /. will be collapsed down to a single ..
-If you need this sequence to appear and not collapse then you can escape it with /\..
+`'/resource.json'` or `'/:id.json'` or even `'/resource/:resource_id.:format'`
+If the parameter before the suffix is empty, `:resource_id` in this case, then the `/.` will be collapsed down to a single ..
+If you need this sequence to appear and not collapse then you can escape it with `/\.`.
 
 **Action**
 ```typescript
@@ -79,7 +79,7 @@ interface Action {
    instantiateModel?: boolean, // need do instatiate model ? default - true; if no - return plain text response.
    isArray?: boolean, // If true then the returned object for this action is an array,
    headersForReading?: Array<string>, // Headers which need read
-   params?: any, // Default values for url parameters.
+   params?: any, // Optional set of pre-bound parameters for this action
    cache?: any // todo
  }
 ```
@@ -90,10 +90,21 @@ Default values for url parameters. These can be overridden in actions methods.
 If a parameter value is a function, it will be called every time a param value needs to be obtained for a request (unless the param was overridden).
 The function will be passed the current data value as an argument.
 Each key value in the parameter object is first bound to url template if present and then any excess keys are appended to the url search query after the ?.
-Given a template /path/:verb and parameter {verb:'greet', salutation:'Hello'} results in URL /path/greet?salutation=Hello.
-If the parameter value is prefixed with @, then the value for that parameter will be extracted from the corresponding property on the data object (provided when calling a "non-GET" action method).
-For example, if the defaultParam object is {someParam: '@someProp'} then the value of someParam will be data.someProp.
+Given a template `/path/:verb` and parameter `{verb:'greet', salutation:'Hello'}` results in URL `/path/greet?salutation=Hello`.
+If the parameter value is prefixed with `@`, then the value for that parameter will be extracted from the corresponding property on the data object (provided when calling a "non-GET" action method).
+For example, if the defaultParam object is `{someParam: '@someProp'}` then the value of someParam will be data.someProp.
 Note that the parameter will be ignored, when calling a "GET" action method (i.e. an action method that does not accept a request body)
+
+## How to use
+```
+// api: ApiProvider
+// endpointName: {OpaqueToken} - endpoint name from config.
+// actionName: {string} - default action name or any from config.
+// body: {object} - body data for POST request. If is GET request body use as params
+// params: {object} - additional params which will be mixed with pre-bound parameters for this action and override them if will has the same key.
+this.api.endpoint(endpointName).action(actionName', body, params);
+```
+
 
 ## Examples:
 **Model**
