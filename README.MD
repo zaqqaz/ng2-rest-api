@@ -1,15 +1,4 @@
 # ng2-rest-api
-This is a REST api provider for angular for http actions request to server and instantiate models.
-
-For Angular 1: https://github.com/zaqqaz/ng-rest-api
-
-## Installation
-
-To install this library, run:
-
-```bash
-$ npm install ng2-rest-api
-```
 
 Ng2-rest-api - is a rest api provider for angular 2 for http actions request to server and instantiate models.
 - Describe api to define endpoints and actions
@@ -23,6 +12,15 @@ If you need - you can get plain text response (It is sometimes convenient, but d
 
 ![directive](https://cloud.githubusercontent.com/assets/2823336/19967580/9fa019e8-a1d9-11e6-827e-370232277c0d.png)
 
+For Angular 1: https://github.com/zaqqaz/ng-rest-api
+
+## Installation
+
+To install this library, run:
+
+```bash
+$ npm install ng2-rest-api
+```
 
 ## Add to project
 
@@ -59,26 +57,44 @@ interface ApiConfig {
 **Endpoint**
 ```typescript
 interface Endpoint {
-  name: OpaqueToken;
-  route: string;
-  model?: any;
-  actions?: Action[];
+  name: OpaqueToken; // The name of emdpoint.
+  route: string; // A parameterized part of URL
+  model?: any; // {Object} - model on which will be mapped response, if no - return JSON object.
+  actions?: Action[]; // Hash with declaration of custom actions that will be available in addition to the default set of default actions (see below).
 }
 ```
+
+**route** -
+A parameterized part of URL template with parameters prefixed by : as in /user/:username. If you are using a URL with a port number (e.g. http://example.com:8080/api), it will be respected.
+
+If you are using a url with a suffix, just add the suffix, like this:
+'/resource.json' or '/:id.json' or even '/resource/:resource_id.:format'
+If the parameter before the suffix is empty, :resource_id in this case, then the /. will be collapsed down to a single ..
+If you need this sequence to appear and not collapse then you can escape it with /\..
 
 **Action**
 ```typescript
 interface Action {
-   name: string,
-   method: string,
-   instantiateModel?: boolean,
-   isArray?: boolean,
-   headersForReading?: Array<string>,
-   params?: any,
-   cache?: any
+   name: string, // The name of action.
+   method: string, // Case insensitive HTTP method (e.g. GET, POST, PUT, DELETE, JSONP, etc).
+   instantiateModel?: boolean, // need do instatiate model ? default - true; if no - return plain text response.
+   isArray?: boolean, // If true then the returned object for this action is an array,
+   headersForReading?: Array<string>, // Headers which need read
+   params?: any, // Default values for url parameters.
+   cache?: any // todo
  }
 ```
 ---
+
+**params** -
+Default values for url parameters. These can be overridden in actions methods.
+If a parameter value is a function, it will be called every time a param value needs to be obtained for a request (unless the param was overridden).
+The function will be passed the current data value as an argument.
+Each key value in the parameter object is first bound to url template if present and then any excess keys are appended to the url search query after the ?.
+Given a template /path/:verb and parameter {verb:'greet', salutation:'Hello'} results in URL /path/greet?salutation=Hello.
+If the parameter value is prefixed with @, then the value for that parameter will be extracted from the corresponding property on the data object (provided when calling a "non-GET" action method).
+For example, if the defaultParam object is {someParam: '@someProp'} then the value of someParam will be data.someProp.
+Note that the parameter will be ignored, when calling a "GET" action method (i.e. an action method that does not accept a request body)
 
 ## Examples:
 **Model**
