@@ -10,25 +10,19 @@ Ng2-rest-api - is a rest api provider for angular 2 for http actions request to 
 
 If you need - you can get plain text response (It is sometimes convenient, but do not overdo it)
 
-![directive](https://cloud.githubusercontent.com/assets/2823336/19967580/9fa019e8-a1d9-11e6-827e-370232277c0d.png)
-
 For Angular 1: https://github.com/zaqqaz/ng-rest-api
+
+![directive](https://cloud.githubusercontent.com/assets/2823336/19967580/9fa019e8-a1d9-11e6-827e-370232277c0d.png)
 
 ## Installation
 
 To install this library, run:
 
 ```bash
-$ npm install ng2-rest-api
+$ npm install ng2-rest-api --save
 ```
 
-## Add to project
-
-```bash
-$ npm install ng-rest-api --save
-```
-
-## STEPS
+## NEXT STEPS
 1. Describe models
 2. Create config
 3. Add to @NgModule and execute static method *configure*.
